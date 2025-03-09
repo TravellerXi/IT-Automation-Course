@@ -1,0 +1,33 @@
+---
+- name: Install and configure Apache web server
+  hosts: servers
+  become: yes   # Run tasks as root so that I don't need to run parameter with -b
+  tasks:
+    - name: Install Apache HTTP server
+      package:
+        name: httpd
+        state: present
+
+    - name: Create a simple welcome page
+      copy:
+        content: |
+          <html>
+            <head><title>Welcome to Ansible!</title></head>
+            <body>
+              <h1>Welcome to Ansible managed Apache Web Server!</h1>
+            </body>
+          </html>
+        dest: /var/www/html/index.html
+        mode: '0644'
+
+    - name: Start and enable Apache service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Ensure the Apache service is running
+      service:
+        name: httpd
+        state: restarted
+
